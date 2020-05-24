@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains views_query_plugin.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function nfl_events_plugin_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nfl_events_plugin module.
+    case 'help.page.nfl_events_plugin':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Custom Views query plugin for the display of the scoreboard and team rankings external API data') . '</p>';
+      return $output;
+
+    default:
+  }
+}
