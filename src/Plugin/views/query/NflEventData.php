@@ -11,18 +11,18 @@ use Drupal\nfl_events_plugin\ValidateDate as ValidateDate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Scoreboard views query plugin calls the NFL Scoreboard/Team Ranking API.
+ * NflEventData views query plugin calls the NFL Scoreboard/Team Ranking API.
  *
  * This plugin queries the APIs for data within a 7 day date range, merges data
  * and returns in JSON format.
  *
  * @ViewsQuery(
- *   id = "scoreboard",
- *   title = @Translation("Scoreboard"),
+ *   id = "nfleventdata",
+ *   title = @Translation("NflEventData"),
  *   help = @Translation("Query against the Chalk NFL Scoreboard API.")
  * )
  */
-class Scoreboard extends QueryPluginBase {
+class NflEventData extends QueryPluginBase {
 
   /**
    * API Data Service.
@@ -39,7 +39,7 @@ class Scoreboard extends QueryPluginBase {
   protected $validateDate;
 
   /**
-   * Scoreboard constructor.
+   * NFL Event Data constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

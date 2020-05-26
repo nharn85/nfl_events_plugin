@@ -7,12 +7,12 @@ dependencies:
     - serialization
 _core:
   default_config_hash: bZAIh-w3JpAXpBHHvnOR5kR7O3lRxUrWnQ-QKYACOLY
-id: nfl_scoreboard
-label: 'NFL Scoreboard'
+id: nfl_event_data
+label: 'NFL Event Data'
 module: views
 description: ''
 tag: ''
-base_table: scoreboard_profile
+base_table: nfleventdata_profile
 base_field: ''
 display:
   default:
@@ -74,7 +74,7 @@ display:
           default_field_elements: true
       fields:
         event_id:
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: event_id
           id: event_id
           entity_type: null
@@ -134,7 +134,7 @@ display:
           suffix: ''
         event_date:
           id: event_date
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: event_date
           relationship: none
           group_type: group
@@ -186,7 +186,7 @@ display:
           plugin_id: date
         event_time:
           id: event_time
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: event_time
           relationship: none
           group_type: group
@@ -238,7 +238,7 @@ display:
           plugin_id: date
         away_team_id:
           id: away_team_id
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: away_team_id
           relationship: none
           group_type: group
@@ -295,7 +295,7 @@ display:
           plugin_id: numeric
         away_nick_name:
           id: away_nick_name
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: away_nick_name
           relationship: none
           group_type: group
@@ -344,7 +344,7 @@ display:
           plugin_id: standard
         away_city:
           id: away_city
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: away_city
           relationship: none
           group_type: group
@@ -393,7 +393,7 @@ display:
           plugin_id: standard
         away_rank:
           id: away_rank
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: away_rank
           relationship: none
           group_type: group
@@ -450,7 +450,7 @@ display:
           plugin_id: numeric
         away_rank_points:
           id: away_rank_points
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: away_rank_points
           relationship: none
           group_type: group
@@ -507,7 +507,7 @@ display:
           plugin_id: numeric
         home_team_id:
           id: home_team_id
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: home_team_id
           relationship: none
           group_type: group
@@ -564,12 +564,12 @@ display:
           plugin_id: numeric
         home_nick_name:
           id: home_nick_name
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: home_nick_name
           plugin_id: standard
         home_city:
           id: home_city
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: home_city
           relationship: none
           group_type: group
@@ -618,7 +618,7 @@ display:
           plugin_id: standard
         home_rank:
           id: home_rank
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: home_rank
           relationship: none
           group_type: group
@@ -675,7 +675,7 @@ display:
           plugin_id: numeric
         home_rank_points:
           id: home_rank_points
-          table: scoreboard_profile
+          table: nfleventdata_profile
           field: home_rank_points
           relationship: none
           group_type: group
