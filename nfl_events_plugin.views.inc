@@ -2,6 +2,8 @@
 
 /**
  * @file
+ * NFL Events Plugin Views Data.
+ *
  * This views data will be used to display a new JSON array combining the
  * scoreboard API endpoint data, and the team rankings endpoint data.
  */

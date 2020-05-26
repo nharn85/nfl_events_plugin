@@ -2,7 +2,6 @@
 
 namespace Drupal\nfl_events_plugin\Plugin\views\field;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -37,13 +36,6 @@ class EventDate extends FieldPluginBase {
 
     $options['hide_alter_empty'] = ['default' => FALSE];
     return $options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::buildOptionsForm($form, $form_state);
   }
 
   /**

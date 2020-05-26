@@ -2,7 +2,6 @@
 
 namespace Drupal\nfl_events_plugin\Plugin\views\field;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -32,23 +31,6 @@ class AdjustedPoints extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
-    $options = parent::defineOptions();
-
-    $options['hide_alter_empty'] = ['default' => FALSE];
-    return $options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
-    parent::buildOptionsForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function render(ResultRow $values) {
     // Get the field machine name.
     $field = $this->field;
@@ -62,6 +44,16 @@ class AdjustedPoints extends FieldPluginBase {
     }
 
     return $string;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
+
+    $options['hide_alter_empty'] = ['default' => FALSE];
+    return $options;
   }
 
 }

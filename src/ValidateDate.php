@@ -16,7 +16,7 @@ class ValidateDate {
   }
 
   /**
-   * Validate Date - https://stackoverflow.com/a/19271434.
+   * Validate Date.
    *
    * Validate string is valid date format.
    *

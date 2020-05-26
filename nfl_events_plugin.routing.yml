@@ -1,0 +1,7 @@
+nfl_events_plugin.nfl_events_plugin_configuration_form:
+  path: '/admin/config/services/nfl-events-plugin-configuration'
+  defaults:
+    _form: '\Drupal\nfl_events_plugin\Form\NflEventsPluginConfigurationForm'
+    _title: 'NFL Events Plugin Configuration Form'
+  requirements:
+    _permission: 'administer site configuration'

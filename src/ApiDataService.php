@@ -2,6 +2,7 @@
 
 namespace Drupal\nfl_events_plugin;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -17,6 +18,20 @@ class ApiDataService {
   protected $httpClient;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Property for API key received from config factory.
+   *
+   * @var string
+   */
+  private $apiKey;
+
+  /**
    * Property for ranking data returned from Team Ranking API.
    *
    * @var array
@@ -28,10 +43,17 @@ class ApiDataService {
    *
    * @param \GuzzleHttp\ClientInterface $http_client
    *   The HTTP client.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   A config factory for retrieving required config objects.
    */
-  public function __construct(ClientInterface $http_client) {
+  public function __construct(ClientInterface $http_client, ConfigFactoryInterface $config_factory) {
     $this->httpClient = $http_client;
     $this->rankingData = [];
+    $this->configFactory = $config_factory;
+
+    // Getting API Key to use in methods.
+    $config = $this->configFactory->get('nfl_events_plugin.api_key');
+    $this->apiKey = $config->get('api_key');
   }
 
   /**
@@ -49,7 +71,7 @@ class ApiDataService {
    */
   public function fetchScoreboardData($start_date, $end_date) {
     // Make the Scoreboard API Call.
-    $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/scoreboard/NFL/' . $start_date . '/' . $end_date . '.json?api_key=74db8efa2a6db279393b433d97c2bc843f8e32b0');
+    $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/scoreboard/NFL/' . $start_date . '/' . $end_date . '.json?api_key=' . $this->apiKey);
     // Get request contents.
     $data = $request->getBody()->getContents();
     // Decode JSON for PHP use.
@@ -65,7 +87,7 @@ class ApiDataService {
    *   Team ID comes from the Scoreboard API.
    *
    * @return array
-   *   Custom team rank data
+   *   Custom team rank data.
    */
   public function fetchRankingData($team_id) {
     // Get Team Ranking Data.
@@ -103,7 +125,7 @@ class ApiDataService {
   public function getRankingData() {
     if (empty($this->rankingData)) {
       // Make the Team Rankings API Call.
-      $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/team_rankings/NFL.json?api_key=74db8efa2a6db279393b433d97c2bc843f8e32b0');
+      $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/team_rankings/NFL.json?api_key=' . $this->apiKey);
       // Get request contents.
       $data = $request->getBody()->getContents();
       // Decode JSON for PHP use.

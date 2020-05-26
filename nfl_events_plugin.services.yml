@@ -1,7 +1,7 @@
 services:
   nfl_events_plugin.apidata:
     class: Drupal\nfl_events_plugin\ApiDataService
-    arguments: ['@http_client']
+    arguments: ['@http_client','@config.factory']
   nfl_events_plugin.validatedate:
     class: Drupal\nfl_events_plugin\ValidateDate
     arguments: []
