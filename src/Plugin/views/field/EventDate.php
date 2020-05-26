@@ -50,12 +50,12 @@ class EventDate extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    // Get the field machine name
+    // Get the field machine name.
     $field = $this->field;
-    // Get the value
+    // Get the value.
     $string = $values->$field;
     if ($string) {
-      // Convert string to timestamp
+      // Convert string to timestamp.
       $date = strtotime($string);
       // Format to d-m-Y (Eg. 20-01-2020)
       return date('d-m-Y', $date);
@@ -63,4 +63,5 @@ class EventDate extends FieldPluginBase {
 
     return $string;
   }
+
 }

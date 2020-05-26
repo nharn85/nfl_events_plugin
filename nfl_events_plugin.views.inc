@@ -1,16 +1,18 @@
 <?php
 
 /**
+ * @file
+ * This views data will be used to display a new JSON array combining the
+ * scoreboard API endpoint data, and the team rankings endpoint data.
+ */
+
+/**
  * Implements hook_views_data().
  */
 function nfl_events_plugin_views_data() {
 
   $data = [];
-
-  // usually $data[table_name]['table'], but since there is no table I’ve used
-  // a short name for the API endpoint, prefixed by the module name instead.
   $data['scoreboard_profile']['table']['group'] = t('API Scoreboard data');
-
   $data['scoreboard_profile']['table']['base'] = [
     'title' => t('API Scoreboard data'),
     'help' => t('NFL scoreboard JSON data provided by the NFL scoreboard endpoint'),
@@ -21,10 +23,8 @@ function nfl_events_plugin_views_data() {
   $data['scoreboard_profile']['event_id'] = [
     'title' => t('Event ID'),
     'help' => t('Event ID'),
-
-    // 'field’ key is used to tell Views how to handle this field.
     'field' => [
-      'id' => 'standard', // name of a Views field plugin, look inside /core/modules/views/src/Plugin/views/field to see all of the field plugins
+      'id' => 'standard',
     ],
   ];
 

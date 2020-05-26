@@ -50,12 +50,12 @@ class EventTime extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    // Get the field machine name
+    // Get the field machine name.
     $field = $this->field;
-    // Get the value
+    // Get the value.
     $string = $values->$field;
     if ($string) {
-      // Convert string to timestamp
+      // Convert string to timestamp.
       $time = strtotime($string);
       // Format to H:i (Eg. 18:23)
       return date('H:i', $time);
@@ -63,4 +63,5 @@ class EventTime extends FieldPluginBase {
 
     return $string;
   }
+
 }

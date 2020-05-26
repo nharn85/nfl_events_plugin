@@ -11,8 +11,10 @@ use Drupal\nfl_events_plugin\ValidateDate as ValidateDate;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Placeholder views query plugin which wraps calls to the JSON Placeholder API in order to
- * expose the results to views.
+ * Scoreboard views query plugin calls the NFL Scoreboard/Team Ranking API.
+ *
+ * This plugin queries the APIs for data within a 7 day date range, merges data
+ * and returns in JSON format.
  *
  * @ViewsQuery(
  *   id = "scoreboard",
@@ -23,11 +25,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Scoreboard extends QueryPluginBase {
 
   /**
+   * API Data Service.
+   *
    * @var \Drupal\nfl_events_plugin\ApiDataService
    */
   protected $apiData;
 
   /**
+   * Validate Date Service.
+   *
    * @var \Drupal\nfl_events_plugin\ValidateDate
    */
   protected $validateDate;
@@ -52,6 +58,9 @@ class Scoreboard extends QueryPluginBase {
     $this->validateDate = $validateDate;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
@@ -63,21 +72,16 @@ class Scoreboard extends QueryPluginBase {
   }
 
   /**
-   * ensureTable is used by Views core to make sure that the generated SQL query
-   * contains the appropriate JOINs to ensure that a given table is included in
-   * the results. In our case, we don’t have any concept of table joins,
-   * so we return an empty string, which satisfies plugins that may call this method.
+   * {@inheritDoc}
    */
   public function ensureTable($table, $relationship = NULL) {
     return '';
   }
 
   /**
-   * addField is used by Views core to limit the fields that are part of the result set.
-   * In our case, the Placeholder API has no way to limit the fields that come back in an
-   * API response, so we don’t need this.
+   * {@inheritDoc}
    */
-  public function addField($table, $field, $alias = '', $params = array()) {
+  public function addField($table, $field, $alias = '', $params = []) {
     return $field;
   }
 
@@ -86,11 +90,11 @@ class Scoreboard extends QueryPluginBase {
    */
   public function execute(ViewExecutable $view) {
     try {
-      // Get URL args from view
+      // Get URL args from view.
       $start_date = $view->args[0];
       $end_date = $view->args[1];
 
-      // Validate dates are in the proper format
+      // Validate dates are in the proper format.
       $validStart = $this->validateDate->validateDate($start_date);
       $validEnd = $this->validateDate->validateDate($end_date);
 
@@ -98,24 +102,24 @@ class Scoreboard extends QueryPluginBase {
         return;
       }
 
-      // Get Scoreboard JSON Data
+      // Get Scoreboard JSON Data.
       $dataObj = $this->apiData->fetchScoreboardData($start_date, $end_date);
 
-      // Loop results per game
+      // Loop results per game.
       foreach ($dataObj->results as $key => $value) {
 
-        // If there is game data available, continue to traverse the object
+        // If there is game data available, continue to traverse the object.
         if (isset($value->data)) {
           $index = 0;
           foreach ($value->data as $inner_key => $inner_value) {
-            // Get team_ranking data by Team ID
+            // Get team_ranking data by Team ID.
             $away_team_id = $value->data->$inner_key->away_team_id;
             $away_data = $this->apiData->fetchRankingData($away_team_id);
 
             $home_team_id = $value->data->$inner_key->home_team_id;
             $home_data = $this->apiData->fetchRankingData($home_team_id);
 
-            // Assign fields
+            // Assign fields.
             $row['event_id'] = $value->data->$inner_key->event_id;
             $row['event_date'] = $value->data->$inner_key->event_date;
             $row['event_time'] = $value->data->$inner_key->event_date;
@@ -130,16 +134,18 @@ class Scoreboard extends QueryPluginBase {
             $row['home_rank'] = $home_data['rank'];
             $row['home_rank_points'] = $home_data['adjusted_points'];
 
-            // Set the rows index
+            // Set the rows index.
             $row['index'] = $index++;
 
-            // Add this row the views results
+            // Add this row the views results.
             $view->result[] = new ResultRow($row);
           }
         }
       }
-    } catch (RequestException $e) {
+    }
+    catch (RequestException $e) {
       watchdog_exception('nfl_events_plugin', $e->getMessage());
     }
   }
+
 }
