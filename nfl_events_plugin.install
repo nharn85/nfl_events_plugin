@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains uninstall hook to remove added config.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function nfl_events_plugin_uninstall() {
+  \Drupal::configFactory()->getEditable('nfl_events_plugin.api_key')->delete();
+}
