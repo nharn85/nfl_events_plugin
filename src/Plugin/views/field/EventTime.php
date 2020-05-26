@@ -31,6 +31,16 @@ class EventTime extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
+
+    $options['hide_alter_empty'] = ['default' => FALSE];
+    return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function render(ResultRow $values) {
     // Get the field machine name.
     $field = $this->field;
@@ -44,16 +54,6 @@ class EventTime extends FieldPluginBase {
     }
 
     return $string;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function defineOptions() {
-    $options = parent::defineOptions();
-
-    $options['hide_alter_empty'] = ['default' => FALSE];
-    return $options;
   }
 
 }

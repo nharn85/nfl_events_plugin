@@ -31,6 +31,16 @@ class AdjustedPoints extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
+
+    $options['hide_alter_empty'] = ['default' => FALSE];
+    return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function render(ResultRow $values) {
     // Get the field machine name.
     $field = $this->field;
@@ -39,21 +49,12 @@ class AdjustedPoints extends FieldPluginBase {
     if ($string) {
       // Convert string to float.
       $number = floatval($string);
-      // Round 2 decimals.
-      return round($number, 2);
+      // Using number_format() to round 2 decimals as this will allow a trailing
+      // zero if value allows.
+      return number_format($number, 2);
     }
 
     return $string;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function defineOptions() {
-    $options = parent::defineOptions();
-
-    $options['hide_alter_empty'] = ['default' => FALSE];
-    return $options;
   }
 
 }
