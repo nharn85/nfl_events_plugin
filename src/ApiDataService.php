@@ -70,8 +70,12 @@ class ApiDataService {
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public function fetchScoreboardData($start_date, $end_date) {
+    // Build API Url.
+    $uri = 'https://delivery.chalk247.com/scoreboard/NFL/';
+    $uri .= $start_date . '/' . $end_date;
+    $uri .= '.json?api_key=' . $this->apiKey;
     // Make the Scoreboard API Call.
-    $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/scoreboard/NFL/' . $start_date . '/' . $end_date . '.json?api_key=' . $this->apiKey);
+    $request = $this->httpClient->request('GET', $uri);
     // Get request contents.
     $data = $request->getBody()->getContents();
     // Decode JSON for PHP use.
@@ -124,8 +128,11 @@ class ApiDataService {
    */
   public function getRankingData() {
     if (empty($this->rankingData)) {
+      // Build API Url.
+      $uri = 'https://delivery.chalk247.com/team_rankings/NFL.json?api_key=';
+      $uri .= $this->apiKey;
       // Make the Team Rankings API Call.
-      $request = $this->httpClient->request('GET', 'https://delivery.chalk247.com/team_rankings/NFL.json?api_key=' . $this->apiKey);
+      $request = $this->httpClient->request('GET', $uri);
       // Get request contents.
       $data = $request->getBody()->getContents();
       // Decode JSON for PHP use.
