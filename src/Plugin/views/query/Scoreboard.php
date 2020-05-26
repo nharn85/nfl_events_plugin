@@ -3,10 +3,12 @@
 namespace Drupal\nfl_events_plugin\Plugin\views\query;
 
 use Drupal\views\Plugin\views\query\QueryPluginBase;
-
 use Drupal\views\ViewExecutable;
 use Drupal\views\ResultRow;
 use GuzzleHttp\Exception\RequestException;
+use Drupal\nfl_events_plugin\ApiDataService as ApiDataService;
+use Drupal\nfl_events_plugin\ValidateDate as ValidateDate;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Placeholder views query plugin which wraps calls to the JSON Placeholder API in order to
@@ -19,6 +21,46 @@ use GuzzleHttp\Exception\RequestException;
  * )
  */
 class Scoreboard extends QueryPluginBase {
+
+  /**
+   * @var \Drupal\nfl_events_plugin\ApiDataService
+   */
+  protected $apiData;
+
+  /**
+   * @var \Drupal\nfl_events_plugin\ValidateDate
+   */
+  protected $validateDate;
+
+  /**
+   * Scoreboard constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param string $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\nfl_events_plugin\ApiDataService $apiData
+   *   The API Data service.
+   * @param \Drupal\nfl_events_plugin\ValidateDate $validateDate
+   *   The Validate Date service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ApiDataService $apiData, ValidateDate $validateDate) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->apiData = $apiData;
+    $this->validateDate = $validateDate;
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('nfl_events_plugin.apidata'),
+      $container->get('nfl_events_plugin.validatedate')
+    );
+  }
 
   /**
    * ensureTable is used by Views core to make sure that the generated SQL query
@@ -43,47 +85,60 @@ class Scoreboard extends QueryPluginBase {
    * {@inheritdoc}
    */
   public function execute(ViewExecutable $view) {
-    // TODO: Add field plugins to alter data ✅
-    // TODO: Add date contexual filters
-    // TODO: Bring in as DI
-    // TODO: For 2nd API call - make service for each?
-    // TODO: Check for caching per day?
-    $client = \Drupal::httpClient();
     try {
-      $request = $client->get('https://delivery.chalk247.com/scoreboard/NFL/2020-01-12/2020-01-19.json?api_key=74db8efa2a6db279393b433d97c2bc843f8e32b0');
-      $data = $request->getBody()->getContents();
-      $dataObj = json_decode($data);
+      // Get URL args from view
+      $start_date = $view->args[0];
+      $end_date = $view->args[1];
 
-      // Results array - per game record
+      // Validate dates are in the proper format
+      $validStart = $this->validateDate->validateDate($start_date);
+      $validEnd = $this->validateDate->validateDate($end_date);
+
+      if (!$validStart || !$validEnd) {
+        return;
+      }
+
+      // Get Scoreboard JSON Data
+      $dataObj = $this->apiData->fetchScoreboardData($start_date, $end_date);
+
+      // Loop results per game
       foreach ($dataObj->results as $key => $value) {
+
+        // If there is game data available, continue to traverse the object
         if (isset($value->data)) {
           $index = 0;
           foreach ($value->data as $inner_key => $inner_value) {
-            // assign fields
+            // Get team_ranking data by Team ID
+            $away_team_id = $value->data->$inner_key->away_team_id;
+            $away_data = $this->apiData->fetchRankingData($away_team_id);
+
+            $home_team_id = $value->data->$inner_key->home_team_id;
+            $home_data = $this->apiData->fetchRankingData($home_team_id);
+
+            // Assign fields
             $row['event_id'] = $value->data->$inner_key->event_id;
             $row['event_date'] = $value->data->$inner_key->event_date;
             $row['event_time'] = $value->data->$inner_key->event_date;
             $row['away_team_id'] = $value->data->$inner_key->away_team_id;
             $row['away_nick_name'] = $value->data->$inner_key->away_nick_name;
             $row['away_city'] = $value->data->$inner_key->away_city;
+            $row['away_rank'] = $away_data['rank'];
+            $row['away_rank_points'] = $away_data['adjusted_points'];
             $row['home_team_id'] = $value->data->$inner_key->home_team_id;
             $row['home_nick_name'] = $value->data->$inner_key->home_nick_name;
             $row['home_city'] = $value->data->$inner_key->home_city;
-            $row['away_rank'] = "15";
-            $row['away_rank_points'] = "-6.126456";
-            $row['home_rank'] = "45";
-            $row['home_rank_points'] = "-4.54322";
+            $row['home_rank'] = $home_data['rank'];
+            $row['home_rank_points'] = $home_data['adjusted_points'];
 
-            // set the rows index
+            // Set the rows index
             $row['index'] = $index++;
 
-            // add this row the views results
+            // Add this row the views results
             $view->result[] = new ResultRow($row);
           }
         }
       }
-    }
-    catch (RequestException $e) {
+    } catch (RequestException $e) {
       watchdog_exception('nfl_events_plugin', $e->getMessage());
     }
   }

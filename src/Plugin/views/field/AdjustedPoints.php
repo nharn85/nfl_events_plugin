@@ -50,9 +50,14 @@ class AdjustedPoints extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    $string = $values->away_rank_points;
+    // Get the field machine name
+    $field = $this->field;
+    // Get the value
+    $string = $values->$field;
     if ($string) {
+      // Convert string to float
       $number = floatval($string);
+      // Round 2 decimals
       return round($number, 2);
     }
 

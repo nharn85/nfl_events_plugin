@@ -1,5 +1,9 @@
 name: 'NFL Events Plugin'
 type: module
-description: 'Custom Views query plugin for the display of the scoreboard and team rankings external API data'
+description: 'Custom Views query plugin and view for the display of the scoreboard and team rankings external API data.'
 core: 8.x
 package: 'Custom'
+dependencies:
+  - views
+  - rest
+  - serialization

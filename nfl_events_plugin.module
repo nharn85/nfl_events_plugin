@@ -16,7 +16,7 @@ function nfl_events_plugin_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.nfl_events_plugin':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Custom Views query plugin for the display of the scoreboard and team rankings external API data') . '</p>';
+      $output .= '<p>' . t('Custom Views query plugin and view for the display of the scoreboard and team rankings external API data') . '</p>';
       return $output;
 
     default:

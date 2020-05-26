@@ -5,6 +5,8 @@ dependencies:
     - nfl_events_plugin
     - rest
     - serialization
+_core:
+  default_config_hash: bZAIh-w3JpAXpBHHvnOR5kR7O3lRxUrWnQ-QKYACOLY
 id: nfl_scoreboard
 label: 'NFL Scoreboard'
 module: views
@@ -780,7 +782,7 @@ display:
             home_team_id:
               alias: ''
               raw_output: false
-      path: nfl-event-data
+      path: nfl-event-data/%/%
       style:
         type: serializer
         options:
